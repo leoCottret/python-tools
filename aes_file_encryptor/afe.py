@@ -33,7 +33,7 @@ def generate_key_file(keyFile):
 
 # -----ENCRYPT-----
 def encrypt_file(fileIn, fileOut, keyFile):
-	# get key value
+	# Get key from file
 	key = ""
 	with open(keyFile, "r") as f:
 		key = bytearray.fromhex(f.read())
@@ -42,9 +42,8 @@ def encrypt_file(fileIn, fileOut, keyFile):
 	with open(fileIn, "rb") as f:
 	    file_in = f.read()
 
-	nonce_str = getpass.getpass(prompt=NOONCE_MESSAGE)
-
 	# Create encrypted file
+	nonce_str = getpass.getpass(prompt=NOONCE_MESSAGE)
 	cipher = AES.new(key, AES.MODE_EAX, nonce=bytes(nonce_str, "utf-8"))
 	ciphertext, tag = cipher.encrypt_and_digest(file_in)
 	file_out = open(fileOut, "wb")
@@ -58,8 +57,6 @@ def decrypt_file(fileIn, fileOut, keyFile):
 	key=""
 	with open(keyFile, "r") as f:
 		key = bytearray.fromhex(f.read())
-	nonce_str = getpass.getpass(prompt=NOONCE_MESSAGE)
-	cipher = AES.new(key, AES.MODE_EAX, nonce=bytes(nonce_str, "utf-8"))
 
 	# Get encrypted file data
 	file_in=""
@@ -67,6 +64,8 @@ def decrypt_file(fileIn, fileOut, keyFile):
 		file_in = base64.b64decode(f.read())
 
 	# Create decrypted file with key
+	nonce_str = getpass.getpass(prompt=NOONCE_MESSAGE)
+	cipher = AES.new(key, AES.MODE_EAX, nonce=bytes(nonce_str, "utf-8"))
 	file_out = open(fileOut, "wb")
 	file_out.write(cipher.decrypt(file_in))
 	file_out.close()
@@ -82,9 +81,6 @@ def print_help_msg(msg):
 	exit()
 
 # -----MAIN-----
-
-
-
 if (args.generate_key):
 	generate_key_file(args.key_file_name)
 if (args.encrypt or args.decrypt):
